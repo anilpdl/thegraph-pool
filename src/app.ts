@@ -3,7 +3,6 @@ import morgan from 'morgan';
 
 import { env } from '@/config/env';
 import { errorConverter, errorHandler } from '@/middlewares/error.middleware';
-import GraphService from '@/services/graph.service';
 
 class App {
   public app: express.Application;
@@ -21,7 +20,6 @@ class App {
   }
 
   public listen() {
-    new GraphService().fetchAllCollateral();
     this.app.listen(this.port, () => {
       console.info('=================================');
       console.info(`======= ENV: ${this.env} =======`);

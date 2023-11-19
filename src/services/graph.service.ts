@@ -3,41 +3,14 @@ import GQLService from '@/services/gql.service';
 class GraphService {
   private client = GQLService.getInstance();
 
-  public async fetchUserCollateral(walletAddress: string) {
-    const { data } = await this.client.query(
-      `query UserCollaterals($walletAddress: String!) {
-        liquidates(where: {user: $walletAddress}) {
-          collateralAmount
-          user
-        }
-      }
-      `,
-      { variables: { walletAddress } }
-    );
-
-    return data?.liquidates;
-  }
-
-  public async fetchAllCollateral() {
-    const { data } = await this.client.query(
-      `query AllCollaterals {
-        liquidates {
-          collateralAmount
-          user
-        }
-      }
-      `
-    );
-
-    return data?.liquidates;
-  }
-
   public async fetchUserBorrow(walletAddress: string) {
     const { data } = await this.client.query(
       `query UserBorrows($walletAddress: String!) {
         borrows(where: {user: $walletAddress}) {
           tokenAmount
           user
+          Pool_id
+          blockNumber
         }
       }
       `,
@@ -53,6 +26,8 @@ class GraphService {
         borrows {
           tokenAmount
           user
+          Pool_id
+          blockNumber
         }
       }
       `
@@ -68,6 +43,8 @@ class GraphService {
           deposits(where: { user: $walletAddress }) {
             tokenAmount
             user
+            Pool_id
+            blockNumber
           }
         }
       `,
@@ -83,6 +60,8 @@ class GraphService {
         deposits {
           tokenAmount
           user
+          Pool_id
+          blockNumber
         }
       }
       `
@@ -90,34 +69,50 @@ class GraphService {
 
     return data?.deposits;
   }
-  public async fetchUserWithdraws(walletAddress: string) {
+
+  public async fetchUserSupply(walletAddress: string) {
     const { data } = await this.client.query(
-      `
-        query UserWithdraws($walletAddress: String!) {
-          withdraws(where: { user: $walletAddress }) {
-            tokenAmount
-            user
-          }
+      `query UserSupply($walletAddress: String!) {
+        deposits(where: {user: $walletAddress}) {
+          tokenAmount
+          user
+          Pool_id
+          blockNumber
         }
+        borrows(where: {user: $walletAddress}) {
+          tokenAmount
+          user
+          Pool_id
+          blockNumber
+        }
+      }
       `,
       { variables: { walletAddress } }
     );
 
-    return data?.withdraws;
+    return data;
   }
 
-  public async fetchAllWithdraws() {
+  public async fetchAllSupply() {
     const { data } = await this.client.query(
-      `query AllWithdraws {
-        withdraws {
+      `query AllSupply {
+        deposits {
           tokenAmount
           user
+          Pool_id
+          blockNumber
+        }
+        borrows {
+          tokenAmount
+          user
+          Pool_id
+          blockNumber
         }
       }
       `
     );
 
-    return data?.withdraws;
+    return data;
   }
 }
 
